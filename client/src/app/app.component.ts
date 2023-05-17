@@ -16,28 +16,34 @@ export class AppComponent implements OnInit {
 
     boardgames$!: Observable<Boardgame[]>
     form$!: FormGroup
-    title = new Subject<string>
+    input = new Subject<string>
 
     ngOnInit(): void {
         this.form$ = this.fb.group({
             name: this.fb.control('', [Validators.required]),
-            limit: this.fb.control(20, [Validators.min(0)])
+            limit: this.fb.control('', [Validators.min(0)])
         })
 
-        this.boardgames$ = this.title.pipe(
-            filter(name => name.trim().length >= 0),
-            debounceTime(1000),
-            mergeMap(name => this.bgService.getBoardgamesByName(name))
+        this.boardgames$ = this.form$.valueChanges.pipe(
+            debounceTime(500),
+            mergeMap(v => this.getBoardgamesByPage(this.form$.get("limit")?.value, 0)),
         )
+        
+        // this.boardgames$ = this.title.pipe(
+        //     filter(name => name.trim().length >= 0),
+        //     debounceTime(300),
+        //     mergeMap(name => this.bgService.getBoardgamesByName(name))
+        // )
     }
 
     search(event: any) {
         console.info(event)
-        this.title.next(event)
+        this.input.next(event)
     }
 
-    getBoardgamesByPage(limit: number, offset: number) {
+    getBoardgamesByPage(limit: number, offset: number): Observable<Boardgame[]> {
         this.boardgames$ = this.bgService.getBoardgamesByPage(limit, offset)
+        return this.boardgames$
     }
 
     // getBoardGamesByName(name: string) {

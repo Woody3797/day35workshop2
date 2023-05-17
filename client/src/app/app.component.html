@@ -4,7 +4,7 @@
     <form (keyup)="search(name.value)" [formGroup]="form$">
         <div>
             Games per page:
-            <input type="number" min="0" formControlName="limit" #limit>
+            <input type="number" min="0" formControlName="limit" #limit (keyup)="search(limit.value)">
         </div>
         <br>
         <div>
@@ -15,7 +15,7 @@
     <br>
     <div *ngFor="let bg of boardgames$ | async">
         <ul style="border: solid; padding: 0.4em; margin: 0px;">
-            {{ bg.name }} - {{ bg.ranking}}
+            <a href="{{ bg.url }}">{{ bg.gid}} . {{ bg.name }} - {{ bg.ranking}}</a>
         </ul>
     </div>
     <br>

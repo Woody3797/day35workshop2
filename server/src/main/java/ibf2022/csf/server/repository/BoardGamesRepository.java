@@ -6,6 +6,8 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -30,7 +32,9 @@ public class BoardGamesRepository {
 
     public List<Game> getBoardGamesByName(String name) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("name").regex(name)).limit(50);
+        query.addCriteria(Criteria.where("name").regex(name));
+        query.with(Sort.by(Direction.ASC, "gid")).limit(50);
+        
         return template.find(query, Document.class, "boardgames").stream().map(d -> Game.create(d)).toList();
     }
 }

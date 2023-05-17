@@ -30,12 +30,6 @@ public class BoardGamesController {
     public ResponseEntity<String> getAllBoardGames(@RequestParam(defaultValue = "20") Integer limit, @RequestParam(defaultValue = "0") Integer offset) {
         List<Game> listGames = repository.getAllGames(limit, offset);
         List<JsonObject> games = listGames.stream().map(g -> g.toJson()).toList();
-        // Games games = new Games();
-        // games.setGameList(listGames);
-        // games.setOffset(offset);
-        // games.setLimit(limit);
-        // games.setTotal(listGames.size());
-        // games.setTimestamp(LocalDate.now());
         JsonArray result = Json.createArrayBuilder(games).build();
         
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(result.toString());
