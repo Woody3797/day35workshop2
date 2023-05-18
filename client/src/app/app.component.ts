@@ -31,7 +31,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.sub = this.form$.valueChanges.pipe(
             tap(v => console.info(v)),
             debounceTime(500),
-            map(() => this.getBoardgamesByPage(this.form$.get("limit")?.value, this.form$.get("pageNum")?.value-1 ? 0 : this.form$.get("pageNum")?.value-1)),
+            map(() => this.getBoardgamesByPage(this.form$.get("limit")?.value, this.form$.get("pageNum")?.value-1)),
         ).subscribe()
         
         // this.boardgames$ = this.title.pipe(
