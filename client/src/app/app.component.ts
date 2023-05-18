@@ -1,5 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { Observable, Subject, debounceTime, filter, map, mergeMap } from 'rxjs';
+import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Observable, Subject, Subscription, debounceTime, filter, map, mergeMap, startWith, tap } from 'rxjs';
 import { BoardgameService } from './BoardgameService';
 import { Boardgame } from './Boardgame';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -9,7 +9,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
 
     bgService = inject(BoardgameService)
     fb = inject(FormBuilder)
@@ -17,23 +17,32 @@ export class AppComponent implements OnInit {
     boardgames$!: Observable<Boardgame[]>
     form$!: FormGroup
     input = new Subject<string>
+    sub!: Subscription
+    @Input()
+    pageInput = new Subject<number>
 
     ngOnInit(): void {
         this.form$ = this.fb.group({
             name: this.fb.control('', [Validators.required]),
-            limit: this.fb.control('', [Validators.min(0)])
+            limit: this.fb.control(10, [Validators.min(0), Validators.max(50)]),
+            pageNum: this.fb.control(1, [Validators.min(1)]),
         })
 
-        this.boardgames$ = this.form$.valueChanges.pipe(
+        this.sub = this.form$.valueChanges.pipe(
+            tap(v => console.info(v)),
             debounceTime(500),
-            mergeMap(v => this.getBoardgamesByPage(this.form$.get("limit")?.value, 0)),
-        )
+            map(() => this.getBoardgamesByPage(this.form$.get("limit")?.value, this.form$.get("pageNum")?.value-1 ? 0 : this.form$.get("pageNum")?.value-1)),
+        ).subscribe()
         
         // this.boardgames$ = this.title.pipe(
         //     filter(name => name.trim().length >= 0),
         //     debounceTime(300),
         //     mergeMap(name => this.bgService.getBoardgamesByName(name))
         // )
+    }
+
+    ngOnDestroy(): void {
+        this.sub.unsubscribe()
     }
 
     search(event: any) {
@@ -44,6 +53,20 @@ export class AppComponent implements OnInit {
     getBoardgamesByPage(limit: number, offset: number): Observable<Boardgame[]> {
         this.boardgames$ = this.bgService.getBoardgamesByPage(limit, offset)
         return this.boardgames$
+    }
+
+    changePage(event: any) {
+        console.info(event)
+        if (this.form$.get("pageNum")?.value + event > 0) {
+            this.form$.patchValue({
+                pageNum: this.form$.get("pageNum")?.value + event
+            })
+        } else if (event['pageNum'] == null) {
+            console.info(event['pageNum'])
+            this.form$.patchValue({
+                pageNum: 1
+            })
+        }
     }
 
     // getBoardGamesByName(name: string) {

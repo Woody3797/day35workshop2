@@ -1,7 +1,7 @@
 <h1>Day 35 Workshop Boardgames</h1>
 
 <div style="width: 30%; display: block; margin-left: 30%; margin-right: 30%;">
-    <form (keyup)="search(name.value)" [formGroup]="form$">
+    <form (click)="search(name.value)" [formGroup]="form$">
         <div>
             Games per page:
             <input type="number" min="0" formControlName="limit" #limit (keyup)="search(limit.value)">
@@ -11,7 +11,7 @@
             Game name:
             <input type="text" size="30" formControlName="name" #name>
         </div>
-    </form>
+    
     <br>
     <div *ngFor="let bg of boardgames$ | async">
         <ul style="border: solid; padding: 0.4em; margin: 0px;">
@@ -19,9 +19,10 @@
         </ul>
     </div>
     <br>
-    <div>
-        <button>Previous</button>
-        <span>&nbsp;</span>
-        <button style="float: right;">Next</button>
-    </div>
+    
+        <button (click)="changePage(-1)" name="previous">Previous</button>
+        <input type="number" min="1" #pageNum formControlName="pageNum" onkeyup="if (value<1 || value == null) value=1" value="1">
+        <button style="float: right;" (click)="changePage(1)">Next</button>
+ 
+    </form>
 </div>
