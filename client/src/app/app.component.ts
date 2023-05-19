@@ -62,15 +62,15 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     changePage(event: any) {
-        console.info(event)
+        console.info('>> ', event?.pageNum)
         if (this.form$.get("pageNum")?.value + event > 0) {
             this.form$.patchValue({
                 pageNum: this.form$.get("pageNum")?.value + event
             })
-        } else if (event['pageNum'] == null) {
-            console.info(event['pageNum'])
+        } else if (!event['pageNum']) {
+            console.info('>> ', event['pageNum'])
             this.form$.patchValue({
-                pageNum: 1
+                pageNum: 1 
             })
         }
     }
