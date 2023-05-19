@@ -13,7 +13,7 @@ export class BoardgameService {
     getBoardgamesByPage(limit: number, offset: number): Observable<Boardgame[]> {
         const params = new HttpParams().set('limit', limit).set('offset', offset)
 
-        return this.http.get<Boardgame[]>(URL+'games', {params: params})
+        return this.http.get<Boardgame[]>(URL+'gamespage', {params: params})
     }
 
     getBoardgamesByName(name: string): Observable<Boardgame[]> {
@@ -26,5 +26,11 @@ export class BoardgameService {
         const params = new HttpParams().set('limit', limit).set('offset', offset)
 
         return firstValueFrom(this.http.get<Boardgame[]>(URL+'games', {params: params})) 
+    }
+
+    getBoardgames(name: string, limit: number, offset: number): Observable<Boardgame[]> {
+        const params = new HttpParams().set('name', name).set('limit', limit).set('offset', offset)
+
+        return this.http.get<Boardgame[]>(URL+'games', {params: params})
     }
 }

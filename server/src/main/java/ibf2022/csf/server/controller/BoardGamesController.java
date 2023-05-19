@@ -26,9 +26,9 @@ public class BoardGamesController {
     @Autowired
     BoardGamesRepository repository;
 
-    @GetMapping(path = "/games")
-    public ResponseEntity<String> getAllBoardGames(@RequestParam(defaultValue = "10") Integer limit, @RequestParam(defaultValue = "0") Integer offset) {
-        List<Game> listGames = repository.getAllGames(limit, offset);
+    @GetMapping(path = "/gamespage")
+    public ResponseEntity<String> getAllBoardGamesByPage(@RequestParam(defaultValue = "10") Integer limit, @RequestParam(defaultValue = "0") Integer offset) {
+        List<Game> listGames = repository.getAllGamesByPage(limit, offset);
         List<JsonObject> games = listGames.stream().map(g -> g.toJson()).toList();
         JsonArray result = Json.createArrayBuilder(games).build();
         
@@ -38,6 +38,15 @@ public class BoardGamesController {
     @GetMapping(path = "/gamesname")
     public ResponseEntity<String> getBoardGamesByName(@RequestParam String name) {
         List<Game> listGames = repository.getBoardGamesByName(name);
+        List<JsonObject> games = listGames.stream().map(g -> g.toJson()).toList();
+        JsonArray result = Json.createArrayBuilder(games).build();
+        
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(result.toString());
+    }
+
+    @GetMapping(path = "/games")
+    public ResponseEntity<String> getAllBoardGames(@RequestParam String name, @RequestParam(defaultValue = "10") Integer limit, @RequestParam(defaultValue = "0") Integer offset) {
+        List<Game> listGames = repository.getAllGames(name, limit, offset);
         List<JsonObject> games = listGames.stream().map(g -> g.toJson()).toList();
         JsonArray result = Json.createArrayBuilder(games).build();
         

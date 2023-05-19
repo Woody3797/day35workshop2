@@ -21,7 +21,7 @@ public class BoardGamesRepository {
     @Autowired
     MongoTemplate template;
 
-    public List<Game> getAllGames(Integer limit, Integer offset) {
+    public List<Game> getAllGamesByPage(Integer limit, Integer offset) {
         Query query = new Query();
         Pageable pageable = PageRequest.of(offset, limit);
         query.with(pageable);
@@ -35,6 +35,15 @@ public class BoardGamesRepository {
         query.addCriteria(Criteria.where("name").regex(name, "i"));
         query.with(Sort.by(Direction.ASC, "gid")).limit(50);
         
+        return template.find(query, Document.class, "boardgames").stream().map(d -> Game.create(d)).toList();
+    }
+
+    public List<Game> getAllGames(String name, Integer limit, Integer offset) {
+        Query query = new Query();
+        Pageable pageable = PageRequest.of(offset, limit);
+        query.addCriteria(Criteria.where("name").regex(name, "i"));
+        query.with(Sort.by(Direction.ASC, "gid")).with(pageable);
+
         return template.find(query, Document.class, "boardgames").stream().map(d -> Game.create(d)).toList();
     }
 }

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, QueryList, SimpleChanges, ViewChildren, inject } from '@angular/core';
 import { Observable, Subject, Subscription, debounceTime, filter, map, mergeMap, startWith, tap } from 'rxjs';
 import { BoardgameService } from './BoardgameService';
 import { Boardgame } from './Boardgame';
@@ -18,8 +18,10 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     form$!: FormGroup
     input = new Subject<string>
     sub!: Subscription
-    @Input()
-    pageInput = new Subject<number>
+    @ViewChildren('results')
+    resultsCount!: QueryList<any>
+    nextDisabled = false
+    count = 0
 
     ngOnInit(): void {
         this.form$ = this.fb.group({
@@ -29,22 +31,21 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         })
 
         this.sub = this.form$.valueChanges.pipe(
-            tap(v => console.info(v)),
-            debounceTime(500),
-            map(() => this.getBoardgamesByPage(this.form$.get("limit")?.value, this.form$.get("pageNum")?.value-1)),
+            debounceTime(300),
+            map(() => this.getBoardgames(this.form$.get("name")?.value, this.form$.get("limit")?.value, this.form$.get("pageNum")?.value-1)),
         ).subscribe()
-        
-        // this.boardgames$ = this.title.pipe(
-        //     filter(name => name.trim().length >= 0),
-        //     debounceTime(300),
-        //     mergeMap(name => this.bgService.getBoardgamesByName(name))
-        // )
     }
 
     ngAfterViewInit(): void {
         this.form$.patchValue({
             pageNum: 1
         })
+        this.form$.valueChanges.subscribe(
+            data => {
+                console.info(this.count),
+                this.disableNext()
+            }
+        )
     }
 
     ngOnDestroy(): void {
@@ -52,7 +53,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     search(event: any) {
-        console.info(event)
         this.input.next(event)
     }
 
@@ -61,21 +61,33 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         return this.boardgames$
     }
 
+    getBoardgames(name: string, limit: number, offset: number): Observable<Boardgame[]> {
+        this.boardgames$ = this.bgService.getBoardgames(name, limit, offset)
+        return this.boardgames$
+    }
+
     changePage(event: any) {
-        console.info('>> ', event?.pageNum)
-        if (this.form$.get("pageNum")?.value + event > 0) {
+        if (event == 'previous') {
             this.form$.patchValue({
-                pageNum: this.form$.get("pageNum")?.value + event
+                pageNum: Math.max(this.form$.get("pageNum")?.value - 1, 1) 
             })
-        } else if (!event['pageNum']) {
-            console.info('>> ', event['pageNum'])
+        } else if (event == 'next') {
+            this.form$.patchValue({
+                pageNum: Math.max(this.form$.get("pageNum")?.value + 1, 1) 
+            })
+        } else if (event == 1) {
             this.form$.patchValue({
                 pageNum: 1 
             })
         }
     }
 
-    // getBoardGamesByName(name: string) {
-    //     this.boardgames$ = this.bgService.getBoardgamesByName(name)
-    // }
+    disableNext() {
+        this.count = this.resultsCount.toArray().length
+        if (this.count < this.form$.get("limit")?.value) {
+            this.nextDisabled = true
+        } else {
+            this.nextDisabled = false
+        }
+    }
 }
