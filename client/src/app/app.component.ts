@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { Observable, Subject, Subscription, debounceTime, filter, map, mergeMap, startWith, tap } from 'rxjs';
 import { BoardgameService } from './BoardgameService';
 import { Boardgame } from './Boardgame';
@@ -9,7 +9,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
 
     bgService = inject(BoardgameService)
     fb = inject(FormBuilder)
@@ -39,6 +39,12 @@ export class AppComponent implements OnInit, OnDestroy {
         //     debounceTime(300),
         //     mergeMap(name => this.bgService.getBoardgamesByName(name))
         // )
+    }
+
+    ngAfterViewInit(): void {
+        this.form$.patchValue({
+            pageNum: 1
+        })
     }
 
     ngOnDestroy(): void {

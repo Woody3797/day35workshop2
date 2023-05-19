@@ -5,10 +5,12 @@ import { AppComponent } from './app.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BoardgameService } from './BoardgameService';
+import { GameslistComponent } from './gameslist/gameslist.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    GameslistComponent
   ],
   imports: [
     BrowserModule,

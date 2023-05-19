@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, firstValueFrom } from "rxjs";
 import { Boardgame } from "./Boardgame";
 
 const URL = 'http://localhost:8080/'
@@ -19,7 +19,12 @@ export class BoardgameService {
     getBoardgamesByName(name: string): Observable<Boardgame[]> {
         const params = new HttpParams().set('name', name)
 
-        return this.http.get<Boardgame[]>(URL+'gamesname', {params: params})
+        return this.http.get<Boardgame[]>(URL+'gamesname', {params})
     }
 
+    getBoardgamesByPagePromise(limit: number, offset: number): Promise<Boardgame[]> {
+        const params = new HttpParams().set('limit', limit).set('offset', offset)
+
+        return firstValueFrom(this.http.get<Boardgame[]>(URL+'games', {params: params})) 
+    }
 }

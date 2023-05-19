@@ -27,7 +27,7 @@ public class BoardGamesController {
     BoardGamesRepository repository;
 
     @GetMapping(path = "/games")
-    public ResponseEntity<String> getAllBoardGames(@RequestParam(defaultValue = "20") Integer limit, @RequestParam(defaultValue = "0") Integer offset) {
+    public ResponseEntity<String> getAllBoardGames(@RequestParam(defaultValue = "10") Integer limit, @RequestParam(defaultValue = "0") Integer offset) {
         List<Game> listGames = repository.getAllGames(limit, offset);
         List<JsonObject> games = listGames.stream().map(g -> g.toJson()).toList();
         JsonArray result = Json.createArrayBuilder(games).build();

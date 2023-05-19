@@ -1,5 +1,5 @@
 <h1>Day 35 Workshop Boardgames</h1>
-
+<app-gameslist></app-gameslist>
 <div style="width: 30%; display: block; margin-left: 30%; margin-right: 30%;">
     <form (click)="search(name.value)" [formGroup]="form$">
         <div>
@@ -19,10 +19,10 @@
         </ul>
     </div>
     <br>
-    
+    <div style="display: flex; align-items: center; justify-content: center;">
         <button (click)="changePage(-1)" name="previous">Previous</button>
-        <input type="number" min="1" #pageNum formControlName="pageNum" onkeyup="if (value<1 || value == null) value=1" value="1">
+        <input type="number" min="1" #pageNum formControlName="pageNum" onkeyup="if (value<1 || value == null) value=1" value="1" style="text-align: center;">
         <button style="float: right;" (click)="changePage(1)">Next</button>
- 
+    </div>
     </form>
 </div>

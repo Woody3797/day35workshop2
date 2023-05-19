@@ -32,7 +32,7 @@ public class BoardGamesRepository {
 
     public List<Game> getBoardGamesByName(String name) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("name").regex(name));
+        query.addCriteria(Criteria.where("name").regex(name, "i"));
         query.with(Sort.by(Direction.ASC, "gid")).limit(50);
         
         return template.find(query, Document.class, "boardgames").stream().map(d -> Game.create(d)).toList();
