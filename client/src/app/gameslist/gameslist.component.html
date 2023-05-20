@@ -1,24 +1,26 @@
 <h3>Games per page:
-<select name="" id="" (change)="fetchChanges(perPage.value)" #perPage>
+<select name="" id="" (change)="fetchChanges(perPage.value)" #perPage [value]="15">
     <option value="5">5</option>
     <option value="10">10</option>
     <option value="15">15</option>
     <option value="20">20</option>
 </select>
 </h3>
-<div>
-    <label for="filter">Search by name: </label>
-    <input type="text" id="filter" placeholder="Search" (keyup)="nameFilter(filter.value)" #filter >
+
+<div style="margin-bottom: 10px;">
+    <label for="name">Search by name: </label>
+    <input type="text" id="name" placeholder="Search" size="20" (keyup)="nameFilter(name.value)" #name>
 </div>
-<div *ngIf="games$ | async as games else blank">
-    <div *ngFor="let g of games">
-        <a href=""> {{g.name}} </a>
+
+<div *ngIf="games$ | async as games; else blank">
+    <div *ngFor="let g of games; count as c">
+        <a href="{{ g.url }}">{{ g.gid }}. {{g.name}} </a>
     </div>
 </div>
 <br>
-<div>
+<div style="margin-top: 10px;">
     <button (click)="page(-1)">Previous</button>
-    <button (click)="page(1)">Next</button>
+    <button (click)="page(1)" [disabled]="nextDisabled">Next</button>
 </div>
 
 <ng-template #blank></ng-template>

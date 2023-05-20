@@ -16,16 +16,10 @@ export class BoardgameService {
         return this.http.get<Boardgame[]>(URL+'gamespage', {params: params})
     }
 
-    getBoardgamesByName(name: string): Observable<Boardgame[]> {
-        const params = new HttpParams().set('name', name)
+    getBoardgamesByPagePromise(name: string, limit: number, offset: number): Promise<Boardgame[]> {
+        const params = new HttpParams().set('name', name).set('limit', limit).set('offset', offset)
 
-        return this.http.get<Boardgame[]>(URL+'gamesname', {params})
-    }
-
-    getBoardgamesByPagePromise(limit: number, offset: number): Promise<Boardgame[]> {
-        const params = new HttpParams().set('limit', limit).set('offset', offset)
-
-        return firstValueFrom(this.http.get<Boardgame[]>(URL+'games', {params: params})) 
+        return firstValueFrom(this.http.get<Boardgame[]>(URL+'games', {params}))
     }
 
     getBoardgames(name: string, limit: number, offset: number): Observable<Boardgame[]> {

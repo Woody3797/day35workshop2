@@ -10,35 +10,47 @@ import { BoardgameService } from '../BoardgameService';
 export class GameslistComponent implements OnInit {
 
     @Input()
-    limit = 5
+    limit = 15
     @Input()
     offset = 0
     @Input()
-    filter = ''
+    name = ''
     games$!: Promise<Boardgame[]>
+    gamesArr!: Boardgame[]
+    nextDisabled = false
 
     gameService = inject(BoardgameService)
 
-    fetchChanges(limit: string) {
-        this.limit = +limit
-        this.games$ = this.gameService.getBoardgamesByPagePromise(this.limit, this.offset)
+    fetchChanges(value: string) {
+        this.limit = +value // +string changes it to a number if possible
+        this.games$ = this.gameService.getBoardgamesByPagePromise(this.name, this.limit, this.offset)
+       
     }
 
     ngOnInit(): void {
-        this.games$ = this.gameService.getBoardgamesByPagePromise(this.limit, this.offset)
+        this.games$ = this.gameService.getBoardgamesByPagePromise(this.name, this.limit, this.offset)
     }
 
     page(n: number) {
         if (n >= 0) {
-            this.offset += this.offset + this.limit
+            this.offset++
         } else {
-            this.offset = Math.max(0, this.offset - this.limit)
+            this.offset = Math.max(0, this.offset - 1)
         }
-        this.games$ = this.gameService.getBoardgamesByPagePromise(this.limit, this.offset)
+        this.games$ = this.gameService.getBoardgamesByPagePromise(this.name, this.limit, this.offset)
+        this.games$.then(array => {
+            this.gamesArr = array
+            if (this.gamesArr.length < this.limit) {
+                this.nextDisabled = true
+            } else {
+                this.nextDisabled = false
+            }
+        })
     }
 
     nameFilter(input: string) {
-        this.filter = input
+        this.name = input
+        this.games$ = this.gameService.getBoardgamesByPagePromise(this.name, this.limit, this.offset)
     }
 
 }

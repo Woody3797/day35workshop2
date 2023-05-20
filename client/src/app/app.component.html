@@ -1,9 +1,9 @@
 <h1>Day 35 Workshop Boardgames</h1>
 <div style="width: 30vw; display: block; margin-left: 30%; margin-right: 30%;">
-    <form (click)="search(name.value)" [formGroup]="form$">
+    <form [formGroup]="form$">
         <div>
             Games per page:
-            <input type="number" min="0" formControlName="limit" #limit (keyup)="search(limit.value)" onkeyup="if (value<1 || value == null) value=0" value="0" style="text-align: center; width: 4em;">
+            <input type="number" min="0" formControlName="limit" #limit onkeyup="if (value<1 || value == null) value=1" value="1" (keyup)="changeLimit(limit.value)" style="text-align: center; width: 4em;">
         </div>
         <br>
         <div>
@@ -12,14 +12,14 @@
         </div>
     
     <br>
-    <div #results *ngFor="let bg of boardgames$ | async; count as c">
+    <span #results *ngFor="let bg of boardgames$ | async; count as c">
         <ul style="border: solid; padding: 0.5em; margin: 0px;">
             <a href="{{ bg.url }}">{{ bg.gid}} . {{ bg.name }} - rank: {{ bg.ranking}}</a>
         </ul>
-    </div>
+    </span>
     <br>
     <div style="display: flex; align-items: center; justify-content: center;">
-        <button (click)="changePage('previous')" name="previous">Previous</button>
+        <button (click)="changePage('previous')" name="previous" [disabled]="prevDisabled">Previous</button>
         <input type="number" min="1" #pageNum formControlName="pageNum" onkeyup="if (value<1 || value == null) value=1" value="1" (keyup)="changePage(pageNum.value)" style="text-align: center; width: 4em; margin-inline: 5vw;">
         <button style="float: right;" (click)="changePage('next')" [disabled]="nextDisabled">Next</button>
     </div>
@@ -27,4 +27,4 @@
 </div>
 
 <hr>
-<!-- <app-gameslist></app-gameslist> -->
+<app-gameslist></app-gameslist>
