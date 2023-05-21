@@ -24,7 +24,6 @@ export class GameslistComponent implements OnInit {
     fetchChanges(value: string) {
         this.limit = +value // +string changes it to a number if possible
         this.games$ = this.gameService.getBoardgamesByPagePromise(this.name, this.limit, this.offset)
-       
     }
 
     ngOnInit(): void {
