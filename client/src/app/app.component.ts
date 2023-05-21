@@ -57,15 +57,6 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
         this.sub$.unsubscribe()
     }
 
-    // search(event: any) {
-    //     this.input.next(event)
-    // }
-
-    // getBoardgames(name: string, limit: number, offset: number): Observable<Boardgame[]> {
-    //     this.boardgames$ = this.bgService.getBoardgames(name, limit, offset)
-    //     return this.boardgames$
-    // }
-
     changePage(event: any) {
         if (event == 'previous') {
             this.form$.patchValue({
@@ -90,4 +81,15 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
             })
         }
     }
+
+    
+    // search(event: any) {
+    //     this.input.next(event)
+    // }
+
+    // getBoardgames(name: string, limit: number, offset: number): Observable<Boardgame[]> {
+    //     this.boardgames$ = this.bgService.getBoardgames(name, limit, offset)
+    //     return this.boardgames$
+    // }
+    
 }
